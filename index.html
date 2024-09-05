@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>정적인 웹사이트</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: Arial, sans-serif;
+        }
+        .background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            filter: brightness(50%);
+        }
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+        .overlay.fade-out {
+            opacity: 1;
+        }
+        .clock-container {
+            position: absolute;
+            color: white;
+            text-align: right;
+        }
+        .clock {
+            font-size: 380px;
+            font-family: Helvetica, Arial, sans-serif;
+        }
+        .date {
+            font-size: 100px;
+            font-family: Helvetica, Arial, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div class="background" id="background"></div>
+    <div class="overlay" id="overlay"></div>
+    <div class="clock-container" id="clock-container">
+        <div class="clock" id="clock"></div>
+        <div class="date" id="date"></div>
+    </div>
+    <script>
+        const baseUrl = 'https://picsum.photos/1920/1080?random=';
+
+        function getRandomNumber(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function updateBackground() {
+            const background = document.getElementById('background');
+            const overlay = document.getElementById('overlay');
+            const randomNum = getRandomNumber(1, 100);
+            const urlWithRandom = `${baseUrl}${randomNum}`;
+
+            // 새로운 이미지를 로드할 임시 이미지 객체 생성
+            const tempImage = new Image();
+            tempImage.src = urlWithRandom;
+            tempImage.onload = () => {
+                // 페이드 아웃 효과 적용
+                overlay.classList.add('fade-out');
+
+                // 페이드 아웃이 완료된 후에 배경 이미지 교체 및 시계 위치 업데이트
+                setTimeout(() => {
+                    // 새로운 이미지를 배경으로 설정
+                    background.style.backgroundImage = `url(${urlWithRandom})`;
+
+                    // 시계의 위치를 랜덤하게 설정
+                    const clockContainer = document.getElementById('clock-container');
+                    const margin = 100; 
+                    const maxTop = window.innerHeight - clockContainer.offsetHeight - margin;
+                    const maxLeft = window.innerWidth - clockContainer.offsetWidth - margin;
+                    const randomTop = getRandomNumber(margin, maxTop);
+                    const randomLeft = getRandomNumber(margin, maxLeft);
+                    clockContainer.style.top = `${randomTop}px`;
+                    clockContainer.style.left = `${randomLeft}px`;
+
+                    // 페이드 인 효과 적용
+                    overlay.classList.remove('fade-out');
+                }, 1000); // 페이드 아웃 효과의 지속 시간을 여기에 맞춰 설정
+            };
+        }
+
+        function updateTime() {
+            const clockElement = document.getElementById('clock');
+            const dateElement = document.getElementById('date');
+            const now = new Date();
+            
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            clockElement.textContent = `${hours}:${minutes}`;
+            
+            const day = now.toLocaleDateString('ko-KR', {month: '2-digit', day: '2-digit', weekday: 'long'});
+            dateElement.textContent = day;
+        }
+
+        setInterval(updateBackground, 10000); // 10초마다 배경화면 변경
+        setInterval(updateTime, 1000); // 시계 1초마다 갱신
+
+        document.addEventListener("DOMContentLoaded", () => {
+            updateBackground();
+            updateTime();
+        });
+    </script>
+</body>
+</html>
