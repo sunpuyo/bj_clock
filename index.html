@@ -31,7 +31,7 @@
             transition: opacity 1s ease-in-out;
         }
         .overlay.fade-out {
-            opacity: 1;
+            opacity: 0.4;
         }
         .clock-container {
             position: absolute;
@@ -41,10 +41,12 @@
         .clock {
             font-size: 380px;
             font-family: Helvetica, Arial, sans-serif;
+            font-weight: bold;
         }
         .date {
             font-size: 100px;
             font-family: Helvetica, Arial, sans-serif;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -110,7 +112,7 @@
             dateElement.textContent = day;
         }
 
-        setInterval(updateBackground, 10000); // 10초마다 배경화면 변경
+        setInterval(updateBackground, 10 * 60 * 1000); // 10분마다 배경화면 변경
         setInterval(updateTime, 1000); // 시계 1초마다 갱신
 
         document.addEventListener("DOMContentLoaded", () => {
